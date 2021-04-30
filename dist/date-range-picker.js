@@ -299,20 +299,22 @@
   var CustomEvent = shimCustomEvent();
 
   function shimCustomEvent() {
-    var CustomEvent = window.CustomEvent;
+    if (window) {
+      var CustomEvent = window.CustomEvent;
 
-    if (typeof CustomEvent !== 'function') {
-      CustomEvent = function (event, params) {
-        params = params || {bubbles: false, cancelable: false, detail: undefined};
-        var evt = document.createEvent('CustomEvent');
-        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-        return evt;
-      };
+      if (typeof CustomEvent !== 'function') {
+        CustomEvent = function (event, params) {
+          params = params || {bubbles: false, cancelable: false, detail: undefined};
+          var evt = document.createEvent('CustomEvent');
+          evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+          return evt;
+        };
 
-      CustomEvent.prototype = window.Event.prototype;
+        CustomEvent.prototype = window.Event.prototype;
+      }
+
+      return CustomEvent;
     }
-
-    return CustomEvent;
   }
 
   /**
